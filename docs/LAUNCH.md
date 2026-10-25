@@ -5,7 +5,7 @@
 1. Merge to `main`. CI runs the tests.
 2. GitHub: Settings > Pages > Source: **GitHub Actions**.
 3. Settings > Secrets and variables > Actions > Variables > new variable `ENABLE_PAGES` = `true`.
-4. Actions tab > "Deploy to GitHub Pages" > Run workflow. The site appears at the `baseUrl` in `config.json`.
+4. Actions tab > "Deploy to GitHub Pages" > Run workflow. The site appears at the `baseUrl` in `config.json`. (Current live host: Cloudflare, https://kanakku.mukundhansubbaraj.workers.dev. Keep only one host live so search engines see one copy.)
 5. If you use a different address (custom domain), change `baseUrl` in `config.json` and rebuild.
 
 ## Search Console
