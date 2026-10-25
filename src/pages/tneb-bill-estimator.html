@@ -1,0 +1,183 @@
+<title>TNEB Bill Estimator</title>
+<meta name="description" content="Estimate your two-month TNEB electricity bill from your appliances, see where the units go, and see what crossing 500 units costs.">
+<meta name="claude:viewport-fit-sides" content="cover">
+<!--BODY-->
+{{HEADER:tneb}}
+<main class="wrap">
+  <p class="crumb"><a href="index.html">Kanakku</a> / TNEB bill</p>
+  <h1>TNEB bill from your appliances</h1>
+  <p class="tamil">மின் கட்டணம்</p>
+  <p class="lede">Tell it what runs at home and for how long. It estimates the two-month bill and shows which appliances use the most.</p>
+
+  <div class="tool">
+    <form class="panel" onsubmit="return false" aria-label="Your usage">
+      <fieldset>
+        <legend>How do you want to enter usage?</legend>
+        <label class="check"><input type="radio" name="mode" id="mode-app" value="app" checked><span>Estimate from appliances</span></label>
+        <label class="check"><input type="radio" name="mode" id="mode-units" value="units"><span>I know the units on my bill</span></label>
+      </fieldset>
+      <div class="field" id="units-field" hidden>
+        <label for="units">Units for the two months</label>
+        <input id="units" type="number" inputmode="numeric" min="0" step="1" value="420">
+      </div>
+      <div class="row2">
+        <div class="field"><label for="days">Days in the cycle</label><input id="days" type="number" inputmode="numeric" min="1" max="70" step="1" value="60"></div>
+        <div class="field"><label for="free">Free units scheme</label>
+          <select id="free"><option value="200">200 free (2026-27)</option><option value="100">100 free (older)</option></select>
+        </div>
+      </div>
+      <div id="app-block">
+        <div class="btn-row"><button type="button" class="btn" id="reset">Reset to a 2-bedroom home</button><button type="button" class="btn" id="clear">Clear all</button></div>
+        <div class="scroll">
+          <table class="app-table" id="apps">
+            <thead><tr><th>Appliance</th><th>How many</th><th>Watts</th><th>Hours a day</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <p class="hint">Wattage is printed on the appliance label. For a fridge, enter about 8 hours a day because the compressor cycles on and off.</p>
+      </div>
+    </form>
+
+    <section class="panel result" aria-live="polite" aria-label="Result">
+      <h2>Your two-month bill</h2>
+      <div class="ledger" id="ledger"></div>
+      <h3>How the units are billed</h3>
+      <div class="scroll"><table id="slabs"></table></div>
+      <h3>The 500-unit line</h3>
+      <div class="scroll"><table id="cliff"></table></div>
+      <p class="hint" id="cliff-note"></p>
+      <div id="share-block">
+        <h3>Where the units go</h3>
+        <ul class="share" id="share"></ul>
+      </div>
+    </section>
+  </div>
+
+  <div class="flag">
+    <strong>Check these before you rely on the number</strong>
+    <p>Free units: pages written before May 2026 say 100 free units. For FY 2026-27, secondary sources report 200 free units for homes using up to 500 units in the two months, under G.O.(Ms.) No.50 of 10 May 2026 and TNERC Order No.5 of 2026. Above 500 units only 100 are free. The page uses 200 by default.</p>
+    <p>Slab rates: these are from TNERC Tariff Order No.6 of 2025, effective 1 July 2025. An inflation revision was due on 1 July 2026, but pages checked up to October 2026 report that none was published and that no domestic hike was applied. Electricity duty is taken as 5% of the energy charge. Your actual bill can differ because of meter-reading dates and any adjustment shown on it.</p>
+  </div>
+
+  <details class="rates">
+    <summary>Rates used (you can change them)</summary>
+    <div class="row2">
+      <div class="field"><label for="duty">Electricity duty % on energy charge</label><input id="duty" type="number" step="0.5" min="0" value="5"></div>
+    </div>
+    <p class="hint">Slab prices are fixed in the code and listed in the table of the result. Edit calc.js to change them when the tariff is revised.</p>
+  </details>
+
+  <section class="notes">
+    <h2>How this is calculated</h2>
+    <ul>
+      <li>Units for the cycle = count × watts × hours a day × days ÷ 1000, added up over all appliances.</li>
+      <li>Billing is telescopic: each price applies only to the units inside its slab.</li>
+      <li>At 500 units or fewer, the first 200 units are free. At 501 units or more, only the first 100 are free and every slab above 500 is dearer, so crossing the line adds a large step.</li>
+      <li>The split by appliance is approximate. It divides the bill in proportion to units, which ignores that free units come off the lowest slabs.</li>
+    </ul>
+    <h2>Sources</h2>
+    <p class="src">Tariff order: <a href="https://www.tnerc.tn.gov.in/Orders/files/TO-Order%20No6300620252131.pdf">TNERC Tariff Order No.6 of 2025</a>. Free-unit scheme and revision status from <a href="https://thediscombill.com/guides/tamil-nadu-electricity-tariff-july-2026/">The Disc Om Bill's July 2026 guide</a>, <a href="https://thediscombill.com/tariffs/tamil-nadu/">its tariff page</a> and <a href="https://www.nobroker.in/blog/commercial-electricity-rate-per-unit-in-tamilnadu/">NoBroker's 2026 summary</a>. Tariff last checked {{CHECKED}}.</p>
+  </section>
+</main>
+{{FOOTER}}
+<script src="calc.js"></script>
+<script src="ui.js"></script>
+<script>
+(function () {
+  var K = window.Kanakku;
+  var DEFAULTS = [
+    ['Ceiling fan', 4, 70, 10], ['LED bulb', 6, 9, 5], ['Tube light', 2, 20, 4],
+    ['Refrigerator', 1, 150, 8], ['Television', 1, 80, 4], ['Wi-Fi router', 1, 10, 24],
+    ['Mixer grinder', 1, 500, 0.3], ['Washing machine', 1, 500, 0.5], ['Iron box', 1, 1000, 0.2],
+    ['Water pump', 1, 750, 0.5], ['Phone and laptop charging', 2, 40, 4],
+    ['Air conditioner (1.5 ton)', 0, 1100, 6], ['Water heater', 0, 2000, 0.3]
+  ];
+  var tbody = document.querySelector('#apps tbody');
+
+  function buildRows(clear) {
+    tbody.textContent = '';
+    DEFAULTS.forEach(function (d, i) {
+      var tr = K.el('tr');
+      tr.appendChild(K.el('td', '', d[0]));
+      [['n', clear ? 0 : d[1], 1], ['w', d[2], 10], ['h', d[3], 0.1]].forEach(function (f) {
+        var td = K.el('td');
+        var inp = document.createElement('input');
+        inp.type = 'number'; inp.min = '0'; inp.step = String(f[2]); inp.value = String(f[1]);
+        inp.id = 'a' + i + f[0];
+        inp.setAttribute('aria-label', d[0] + ' ' + (f[0] === 'n' ? 'count' : f[0] === 'w' ? 'watts' : 'hours a day'));
+        inp.addEventListener('input', run);
+        td.appendChild(inp);
+        tr.appendChild(td);
+      });
+      tbody.appendChild(tr);
+    });
+  }
+
+  function readApps() {
+    return DEFAULTS.map(function (d, i) {
+      return { name: d[0], count: K.num('a' + i + 'n'), watts: K.num('a' + i + 'w'), hours: K.num('a' + i + 'h') };
+    });
+  }
+
+  function tableOf(id, head, rows) {
+    var T = K.$(id); T.textContent = '';
+    var tr = K.el('tr');
+    head.forEach(function (h, i) { tr.appendChild(K.el('th', i === 0 ? '' : 'num', h)); });
+    T.appendChild(tr);
+    rows.forEach(function (r) {
+      var row = K.el('tr');
+      r.forEach(function (c, i) { row.appendChild(K.el('td', i === 0 ? '' : 'num', c)); });
+      T.appendChild(row);
+    });
+  }
+
+  function run() {
+    var byUnits = K.$('mode-units').checked;
+    K.$('units-field').hidden = !byUnits;
+    K.$('app-block').hidden = byUnits;
+    K.$('share-block').hidden = byUnits;
+    var opts = { freeUnits: K.$('free').value, dutyPct: K.num('duty') };
+    var apps = K.applianceUnits(readApps(), K.num('days'));
+    var units = byUnits ? K.num('units') : apps.total;
+    var b = K.tnebBill(units, opts);
+
+    var L = K.$('ledger'); L.textContent = '';
+    K.row(L, 'Units used', (Math.round(units * 10) / 10).toLocaleString('en-IN'), '', byUnits ? 'From your bill' : 'Estimated from appliances');
+    K.row(L, 'Free units', Math.min(b.freeUnits, units) + '', 'minor', b.tier1 ? 'Up to 500 units: ' + b.freeUnits + ' free' : 'Above 500 units: only 100 free');
+    K.row(L, 'Energy charge', K.inr(b.energy));
+    K.row(L, 'Electricity duty', K.inr(b.duty), 'minor', b.dutyPct + '% of the energy charge');
+    K.row(L, 'Estimated bill', K.inr(b.total), 'total', units > 0 ? 'About ' + '₹' + (b.total / units).toFixed(2) + ' per unit on average' : '');
+
+    tableOf('slabs', ['Slab (units)', 'Units', 'Price', 'Amount'], b.rows.map(function (r) {
+      return [r.from + ' to ' + (isFinite(r.to) ? r.to : 'above'), (Math.round(r.units * 10) / 10) + '', r.rate === 0 ? 'free' : '₹' + r.rate.toFixed(2), K.inr(r.amount)];
+    }));
+
+    var a = K.tnebBill(500, opts), c = K.tnebBill(501, opts);
+    tableOf('cliff', ['At', 'Bill', 'Difference'], [
+      ['500 units', K.inr(a.total), ''],
+      ['501 units', K.inr(c.total), '+' + K.inr(c.total - a.total)]
+    ]);
+    var note = K.$('cliff-note');
+    if (units > 0 && units <= 500) note.textContent = 'You are ' + Math.round((500 - units) * 10) / 10 + ' units below the line. One unit more than 500 adds about ' + K.inr(c.total - a.total) + '.';
+    else if (units > 500) note.textContent = 'You are ' + Math.round((units - 500) * 10) / 10 + ' units above the line. At 500 units the bill would be ' + K.inr(a.total) + ', which is ' + K.inr(b.total - a.total) + ' less.';
+    else note.textContent = '';
+
+    var S = K.$('share'); S.textContent = '';
+    var items = apps.items.filter(function (x) { return x.units > 0; }).sort(function (p, q) { return q.units - p.units; });
+    var max = items.length ? items[0].units : 1;
+    items.slice(0, 8).forEach(function (x) {
+      var li = K.el('li');
+      li.appendChild(K.el('span', 'nm', x.name));
+      var bar = K.el('span', 'bar'); var fill = document.createElement('i'); fill.style.width = (x.units / max * 100) + '%'; bar.appendChild(fill); li.appendChild(bar);
+      li.appendChild(K.el('span', 'v', apps.total > 0 ? K.inr(b.total * x.units / apps.total) : ''));
+      S.appendChild(li);
+    });
+  }
+
+  buildRows(false);
+  K.on(['mode-app', 'mode-units', 'units', 'days', 'free', 'duty'], run);
+  K.$('reset').addEventListener('click', function () { buildRows(false); run(); });
+  K.$('clear').addEventListener('click', function () { buildRows(true); run(); });
+  run();
+})();
+</script>

@@ -1,0 +1,26 @@
+<title>About and Method</title>
+<meta name="description" content="Who builds Kanakku, how every rate is chosen and dated, and what to do if you find a wrong figure.">
+<meta name="claude:viewport-fit-sides" content="cover">
+<!--BODY-->
+{{HEADER:about}}
+<main class="wrap">
+  <p class="crumb"><a href="index.html">Kanakku</a> / About</p>
+  <h1>About Kanakku and how the numbers are chosen</h1>
+  <p class="lede">Kanakku (கணக்கு) is a small set of free calculators for money questions people in Tamil Nadu and India keep getting conflicting answers to.</p>
+  <section class="notes">
+    <h2>How a rate gets onto a page</h2>
+    <ul>
+      <li>A government order, the regulator's tariff order or a state rate chart is preferred over any website.</li>
+      <li>When websites disagree, the page uses the best-supported figure, shows it in an editable box and lists the other figures in a yellow note.</li>
+      <li>Each rate group has a "last checked" date in the code. A scheduled check fails the build when a group is older than 90 days, so stale rates cannot sit unnoticed.</li>
+      <li>Every calculation is covered by tests worked out by hand, including the awkward edges such as the 500-unit electricity cliff.</li>
+    </ul>
+    <h2>What is not covered</h2>
+    <p>Income tax calculators are left out on purpose until the current slabs can be confirmed from the Income Tax Department's own publication. Official portals that could not be opened while building are named on the page that relies on them.</p>
+    <h2>Found a wrong figure?</h2>
+    <p>Open an issue in the project's GitHub repository with the page, the figure and a link to the order or notification. Corrections with a source are applied first.</p>
+    <h2>Not advice</h2>
+    <p>These are planning estimates. They are not legal, tax or financial advice. The sub-registrar, your lender, your employer or the electricity board decides the final amount.</p>
+  </section>
+</main>
+{{FOOTER}}

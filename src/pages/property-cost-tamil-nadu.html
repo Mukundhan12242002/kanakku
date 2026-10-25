@@ -1,0 +1,127 @@
+<title>Tamil Nadu Property Cost</title>
+<meta name="description" content="Calculate stamp duty, registration fee, GST and loan EMI for a property purchase in Tamil Nadu, and the total cash needed on registration day.">
+<meta name="claude:viewport-fit-sides" content="cover">
+<!--BODY-->
+{{HEADER:property}}
+<main class="wrap">
+  <p class="crumb"><a href="index.html">Kanakku</a> / Property</p>
+  <h1>Total cost to buy property in Tamil Nadu</h1>
+  <p class="tamil">சொத்து பதிவு செலவு</p>
+  <p class="lede">Enter the price and the guideline value. You get the duties, the loan EMI and the cash you need on the day of registration.</p>
+
+  <div class="tool">
+    <form class="panel" onsubmit="return false" aria-label="Property details">
+      <div class="field">
+        <label for="kind">Type of purchase</label>
+        <select id="kind">
+          <option value="resale">Resale, plot or ready flat (no GST)</option>
+          <option value="uc">Under-construction flat (GST applies)</option>
+          <option value="uc-affordable">Under-construction, affordable housing (lower GST)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="sale">Sale price in the agreement (₹)</label>
+        <input id="sale" type="number" inputmode="numeric" min="0" step="10000" value="5000000">
+        <p class="hint words" id="sale-hint"></p>
+      </div>
+      <div class="field">
+        <label for="guide">Guideline value of the property (₹)</label>
+        <input id="guide" type="number" inputmode="numeric" min="0" step="10000" value="4200000">
+        <p class="hint">Duty is charged on the higher of the two. Look up the guideline value on the TNREGINET portal by survey number or street.</p>
+      </div>
+      <label class="check field"><input id="woman" type="checkbox"><span>Registered in a woman's name (reported fee concession up to ₹10 lakh, see the note below)</span></label>
+      <div class="field">
+        <label for="other">Other costs: legal, brokerage, society fees (₹)</label>
+        <input id="other" type="number" inputmode="numeric" min="0" step="1000" value="0">
+      </div>
+      <h2>Home loan</h2>
+      <div class="field">
+        <label for="loan">Loan amount (₹)</label>
+        <input id="loan" type="number" inputmode="numeric" min="0" step="10000" value="3500000">
+        <p class="hint words" id="loan-hint"></p>
+      </div>
+      <div class="row2">
+        <div class="field"><label for="rate">Interest, % a year</label><input id="rate" type="number" inputmode="decimal" min="0" step="0.05" value="8.75"></div>
+        <div class="field"><label for="years">Tenure, years</label><input id="years" type="number" inputmode="numeric" min="1" max="40" step="1" value="20"></div>
+      </div>
+    </form>
+
+    <section class="panel result" aria-live="polite" aria-label="Result">
+      <h2>What it adds up to</h2>
+      <div class="ledger" id="ledger"></div>
+    </section>
+  </div>
+
+  <div class="flag">
+    <strong>Where sources disagree, and what this page uses</strong>
+    <p>Registration fee on a sale deed: a state rate chart citing G.O.(Ms.) No.34, effective 1 April 2023, shows 2%, and TNREGINET's duty table is reported at 7% stamp duty (5% duty plus 2% transfer duty) and 2% registration. Many 2026 pages still say 4%. This page uses 2%.</p>
+    <p>Women's concession: sources report a cut of one percentage point for properties up to ₹10 lakh, but they describe it differently (3% from 4%, or 1% from 2%). This page subtracts one point. Confirm at the sub-registrar's office before you rely on it.</p>
+    <p>Always compare with the figure on your sub-registrar's e-assessment. If it differs, type that rate into the box below.</p>
+  </div>
+
+  <details class="rates">
+    <summary>Rates used (you can change them)</summary>
+    <div class="row3">
+      <div class="field"><label for="r-stamp">Stamp duty %</label><input id="r-stamp" type="number" step="0.1" min="0" value="7"></div>
+      <div class="field"><label for="r-reg">Registration fee %</label><input id="r-reg" type="number" step="0.1" min="0" value="2"></div>
+      <div class="field"><label for="r-women">Women's cut (points)</label><input id="r-women" type="number" step="0.1" min="0" value="1"></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label for="r-gst">GST % (under construction)</label><input id="r-gst" type="number" step="0.5" min="0" value="5"></div>
+      <div class="field"><label for="r-gst1">GST % (affordable)</label><input id="r-gst1" type="number" step="0.5" min="0" value="1"></div>
+    </div>
+  </details>
+
+  <section class="notes">
+    <h2>How this is calculated</h2>
+    <ul>
+      <li>Duty base is the higher of the sale price and the guideline value.</li>
+      <li>Stamp duty and registration fee are percentages of that base.</li>
+      <li>GST is charged on the sale price for under-construction purchases only. Resale and ready-to-move-in property has none.</li>
+      <li>Cash needed on the day is your down payment plus duties, GST and other costs. The loan covers the rest of the price.</li>
+      <li>EMI uses the standard reducing-balance formula, compounded monthly.</li>
+    </ul>
+    <p>Builder-sold new apartments in some cities are registered on a composite value and can work out differently. Treat this as a planning estimate and confirm with the sub-registrar's assessment.</p>
+    <h2>Sources</h2>
+    <p class="src">State rate chart (G.O.(Ms.) No.34 and later orders): <a href="https://tnswp.com/DIGIGOV/StaticAttachment?AttachmentFileName=%2Fpdf%2FTax_rules%2FStamps_and_Registration_Fee.pdf">tnswp.com stamps and registration fee structure</a>. Cross-checked against <a href="https://proquiro.com/blog/stamp-duty-registration-charges-tamil-nadu">Proquiro</a> and <a href="https://www.sobha.com/blog/stamp-duty-and-registration-charges-in-chennai/">Sobha</a>. The official portal is tnreginet.gov.in, which could not be opened while building this page, so check it yourself. Rates last checked {{CHECKED}}.</p>
+  </section>
+</main>
+{{FOOTER}}
+<script src="calc.js"></script>
+<script src="ui.js"></script>
+<script>
+(function () {
+  var K = window.Kanakku;
+  function run() {
+    var r = {
+      stampPct: K.num('r-stamp'), regPct: K.num('r-reg'), womenRegCutPct: K.num('r-women'),
+      womenCapValue: 1000000, gstPct: K.num('r-gst'), gstAffordablePct: K.num('r-gst1')
+    };
+    var o = K.propertyCost({
+      saleValue: K.num('sale'), guidelineValue: K.num('guide'), kind: K.$('kind').value,
+      womanBuyer: K.$('woman').checked, otherCosts: K.num('other'),
+      loanAmount: K.num('loan'), rate: K.num('rate'), years: K.num('years')
+    }, r);
+    K.hint('sale', o.sale);
+    K.hint('loan', K.num('loan'));
+    var L = K.$('ledger');
+    L.textContent = '';
+    K.row(L, 'Value used for duty', K.inr(o.base), '', o.usedGuideline ? 'Guideline value is higher than the price' : 'Sale price is higher than the guideline value');
+    K.row(L, 'Stamp duty', K.inr(o.stamp), '', r.stampPct + '% of that value');
+    K.row(L, 'Registration fee', K.inr(o.reg), '', o.regPct + '%' + (o.womenApplied ? ' after the women\'s concession' : ''));
+    K.row(L, 'Stamp duty and registration together', K.inr(o.govt), 'minor', o.base > 0 ? (o.govt / o.base * 100).toFixed(1) + '% of the duty value' : '');
+    if (o.gstPct > 0) K.row(L, 'GST', K.inr(o.gst), '', o.gstPct + '% of the sale price');
+    if (o.other > 0) K.row(L, 'Other costs', K.inr(o.other));
+    K.row(L, 'Total cost to buy', K.inr(o.totalCost), 'total', 'Price plus every charge above');
+    K.group(L, 'On registration day');
+    K.row(L, 'Down payment', K.inr(o.down), '', 'Price minus loan');
+    K.row(L, 'Cash needed in all', K.inr(o.cash), '', 'Down payment plus charges' + (o.other > 0 ? ' and other costs' : ''));
+    K.group(L, 'Loan');
+    K.row(L, 'Monthly EMI', K.inr(o.emi), '', K.num('years') + ' years at ' + K.num('rate') + '%');
+    var interest = o.emi * Math.round(K.num('years') * 12) - o.loan;
+    K.row(L, 'Interest over the loan', K.inr(Math.max(0, interest)), 'minor');
+  }
+  K.on(['kind', 'sale', 'guide', 'woman', 'other', 'loan', 'rate', 'years', 'r-stamp', 'r-reg', 'r-women', 'r-gst', 'r-gst1'], run);
+  run();
+})();
+</script>

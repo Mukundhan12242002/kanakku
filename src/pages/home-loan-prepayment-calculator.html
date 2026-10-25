@@ -1,0 +1,92 @@
+<title>Home Loan Prepayment Calculator</title>
+<meta name="description" content="See how much interest and how many months you save by prepaying a home loan, either a fixed extra amount every month or a one-time lump sum. EMI stays the same.">
+<meta name="claude:viewport-fit-sides" content="cover">
+<!--BODY-->
+{{HEADER:prepay}}
+<main class="wrap">
+  <p class="crumb"><a href="index.html">Kanakku</a> / Loan prepayment</p>
+  <h1>What prepaying your home loan saves</h1>
+  <p class="tamil">கடன் முன்கூட்டிச் செலுத்தல்</p>
+  <p class="lede">Your EMI stays the same and the loan ends sooner. Enter an extra monthly amount, a one-time lump sum, or both, and compare with paying on schedule.</p>
+
+  <div class="tool">
+    <form class="panel" onsubmit="return false" aria-label="Loan details">
+      <div class="field">
+        <label for="loan">Outstanding loan (₹)</label>
+        <input id="loan" type="number" inputmode="numeric" min="0" step="10000" value="4000000">
+        <p class="hint words" id="loan-hint"></p>
+      </div>
+      <div class="row2">
+        <div class="field"><label for="rate">Interest, % a year</label><input id="rate" type="number" inputmode="decimal" min="0" step="0.05" value="8.75"></div>
+        <div class="field"><label for="years">Remaining years</label><input id="years" type="number" inputmode="decimal" min="1" max="40" step="1" value="20"></div>
+      </div>
+      <h2>Prepayment</h2>
+      <div class="field">
+        <label for="extra">Extra every month (₹)</label>
+        <input id="extra" type="number" inputmode="numeric" min="0" step="500" value="5000">
+        <p class="hint words" id="extra-hint"></p>
+      </div>
+      <div class="row2">
+        <div class="field"><label for="lump">One-time lump sum (₹)</label><input id="lump" type="number" inputmode="numeric" min="0" step="10000" value="0"></div>
+        <div class="field"><label for="lumpMonth">Paid in month number</label><input id="lumpMonth" type="number" inputmode="numeric" min="1" step="1" value="12"></div>
+      </div>
+    </form>
+
+    <section class="panel result" aria-live="polite" aria-label="Result">
+      <h2>Result</h2>
+      <div class="ledger" id="ledger"></div>
+    </section>
+  </div>
+
+  <div class="flag">
+    <strong>Check with your lender</strong>
+    <p>This assumes the EMI stays fixed and each prepayment goes straight to principal. Banks differ on how they apply it, and some charge a fee on fixed-rate or non-individual loans. Floating-rate home loans to individuals generally carry no prepayment penalty, but confirm in your sanction letter.</p>
+    <p>Interest is compounded monthly on the reducing balance. A floating rate that changes will change the result.</p>
+  </div>
+
+  <section class="notes">
+    <h2>How this is calculated</h2>
+    <ul>
+      <li>EMI comes from the standard reducing-balance formula for the loan, rate and tenure you enter.</li>
+      <li>Each month, interest is the balance times the monthly rate. The rest of the payment reduces the balance.</li>
+      <li>Extra money is added to the same payment, so the balance falls faster and the loan ends earlier.</li>
+    </ul>
+    <h2>Questions people ask</h2>
+    <details class="faq"><summary>Is it better to prepay early in the loan?</summary>
+      <p>Yes. Early on, most of each EMI is interest, so each rupee prepaid removes interest on every later month. The same amount prepaid in the last years saves far less.</p></details>
+    <details class="faq"><summary>Does prepaying reduce the EMI or the tenure?</summary>
+      <p>This calculator keeps the EMI and shortens the tenure, which saves the most interest. Many banks let you choose to reduce the EMI instead; ask yours.</p></details>
+    <details class="faq"><summary>Should I prepay the loan or invest the money?</summary>
+      <p>Prepaying earns a certain return equal to your loan rate, with no market risk. Investing may earn more or less. The SIP step-up calculator shows what a monthly amount could grow to at a return you choose.</p></details>
+  </section>
+</main>
+{{FOOTER}}
+<script src="calc.js"></script>
+<script src="ui.js"></script>
+<script>
+(function () {
+  var K = window.Kanakku;
+  function ym(m) {
+    var y = Math.floor(m / 12), r = m % 12, s = [];
+    if (y) s.push(y + (y === 1 ? ' year' : ' years'));
+    if (r) s.push(r + (r === 1 ? ' month' : ' months'));
+    return s.join(' ') || '0 months';
+  }
+  function run() {
+    K.hint('loan', K.num('loan')); K.hint('extra', K.num('extra'));
+    var p = K.prepayment({ loan: K.num('loan'), rate: K.num('rate'), years: K.num('years'),
+      extraMonthly: K.num('extra'), lump: K.num('lump'), lumpMonth: K.num('lumpMonth') });
+    var L = K.$('ledger'); L.textContent = '';
+    K.row(L, 'Monthly EMI', K.inr(p.plain.emi), '', 'Unchanged by prepayment');
+    K.group(L, 'On schedule');
+    K.row(L, 'Loan ends after', ym(p.plain.months));
+    K.row(L, 'Total interest', K.inr(p.plain.interest));
+    K.group(L, 'With prepayment');
+    K.row(L, 'Loan ends after', ym(p.withPre.months));
+    K.row(L, 'Total interest', K.inr(p.withPre.interest));
+    K.row(L, 'Interest saved', K.inr(p.interestSaved), 'total', p.monthsSaved > 0 ? 'and ' + ym(p.monthsSaved) + ' sooner' : 'Add a prepayment to see the saving');
+  }
+  K.on(['loan', 'rate', 'years', 'extra', 'lump', 'lumpMonth'], run);
+  run();
+})();
+</script>
